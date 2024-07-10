@@ -1,0 +1,114 @@
+---
+- name: Machine setup
+  hosts: localhost
+  become: true
+  connection: local
+  gather_facts: true
+  vars:
+    asdf_version: "0.14.0"
+    powerlevel10k_version: "1.20.0"
+    fzf_version: "0.54.0"
+
+  tasks:
+    - name: Get my user
+      ansible.builtin.set_fact:
+        remote_regular_user: "{{ ansible_env.SUDO_USER or ansible_user_id }}"
+
+    - name: Debug remote_regular_user
+      ansible.builtin.debug:
+        var: remote_regular_user
+
+    - name: Install packages
+      ansible.builtin.apt:
+        name:
+          - git
+          - curl
+          - htop
+          - vim
+          - firefox
+          - gh
+          - zsh
+        state: present
+
+    - name: Change shell to zsh
+      ansible.builtin.user:
+        name: "{{ remote_regular_user }}"
+        shell: /usr/bin/zsh
+
+    - name: Import Microsoft GPG Key
+      ansible.builtin.apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Add Visual Studio Code Repo
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main
+        filename: vscode
+        state: present
+
+    - name: Install VS Code
+      ansible.builtin.apt:
+        name: code
+        state: present
+
+    - name: Get Docker installation script
+      ansible.builtin.get_url:
+        url: "https://get.docker.com"
+        dest: "/tmp/get-docker.sh"
+        mode: "0755"
+      register: download_result
+
+    - name: Run Docker installation script
+      ansible.builtin.command:
+        cmd: "/tmp/get-docker.sh"
+        creates: /usr/bin/docker
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ remote_regular_user }}"
+        groups: docker
+        append: true
+
+    - name: Get oh-my-zsh installation script
+      ansible.builtin.get_url:
+        url: "https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
+        dest: "/tmp/install-oh-my-zsh.sh"
+        mode: "0755"
+      register: download_result
+
+    - name: Run oh-my-zsh installation script
+      become: true
+      become_user: "{{ remote_regular_user }}"
+      ansible.builtin.command:
+        cmd: "/tmp/install-oh-my-zsh.sh --unattended"
+        creates: "~{{ remote_regular_user }}/.oh-my-zsh"
+
+    - name: Install oh-my-zsh powerlevel10k theme
+      become: true
+      become_user: "{{ remote_regular_user }}"
+      ansible.builtin.git:
+        repo: "https://github.com/romkatv/powerlevel10k.git"
+        dest: "~{{ remote_regular_user }}/.oh-my-zsh/custom/themes/powerlevel10k"
+        version: "v{{ powerlevel10k_version }}"
+        clone: true
+        update: true
+
+    - name: Clone asdf repository
+      become: true
+      become_user: "{{ remote_regular_user }}"
+      ansible.builtin.git:
+        repo: "https://github.com/asdf-vm/asdf.git"
+        dest: "~{{ remote_regular_user }}/.asdf"
+        version: "v{{ asdf_version }}"
+        clone: true
+        update: true
+
+    - name: Clone fzf repository
+      become: true
+      become_user: "{{ remote_regular_user }}"
+      ansible.builtin.git:
+        repo: "https://github.com/junegunn/fzf.git"
+        dest: "~{{ remote_regular_user }}/.fzf"
+        version: "v{{ fzf_version }}"
+        clone: true
+        update: true
