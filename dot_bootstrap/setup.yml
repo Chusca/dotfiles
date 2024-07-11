@@ -120,6 +120,13 @@
         clone: true
         update: true
 
+    - name: Install fzf
+      become: true
+      become_user: "{{ remote_regular_user }}"
+      ansible.builtin.command:
+        cmd: "~{{ remote_regular_user }}/.fzf/install --bin --no-zsh --no-bash --no-fish --no-update-rc"
+        creates: "~{{ remote_regular_user }}/.fzf/bin/fzf"
+
     - name: Ensure fonts directory
       ansible.builtin.file:
         path: "~{{ remote_regular_user }}/.fonts"
