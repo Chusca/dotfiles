@@ -160,11 +160,15 @@
         owner: "{{ remote_regular_user }}"
 
     - name: Refresh font cache
+      become: true
+      become_user: "{{ remote_regular_user }}"
       ansible.builtin.command:
         cmd: "fc-cache -f -v"
       changed_when: false
 
     - name: Set .fonts/JetBrainsMonoNerdFont-Regular.ttf as terminal font
+      become: true
+      become_user: "{{ remote_regular_user }}"
       ansible.builtin.command:
         cmd: "gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrains Mono Nerd Font Regular 11'"
       changed_when: false
