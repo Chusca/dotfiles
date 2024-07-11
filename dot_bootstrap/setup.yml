@@ -6,8 +6,9 @@
   gather_facts: true
   vars:
     asdf_version: "0.14.0"
-    powerlevel10k_version: "1.20.0"
     fzf_version: "0.54.0"
+    nerd_fonts_version: "3.1.1"
+    powerlevel10k_version: "1.20.0"
 
   tasks:
     - name: Get my user
@@ -30,6 +31,7 @@
           - make
           - python3-venv
           - shfmt
+          - unzip
           - vim
           - yq
           - zsh
@@ -117,3 +119,45 @@
         version: "v{{ fzf_version }}"
         clone: true
         update: true
+
+    - name: Ensure fonts directory
+      ansible.builtin.file:
+        path: "~{{ remote_regular_user }}/.fonts"
+        state: directory
+        mode: "0755"
+        owner: "{{ remote_regular_user }}"
+
+    - name: Check if Jetbrains Mono exists
+      ansible.builtin.shell: "ls ~{{ remote_regular_user }}/.fonts/JetBrainsMonoNerd*FontMono*"
+      register: jetbrains_mono_exists
+      ignore_errors: true
+      changed_when: false
+
+    - name: Download Jetbrains mono
+      when: jetbrains_mono_exists is failed
+      ansible.builtin.unarchive:
+        src: https://github.com/ryanoasis/nerd-fonts/releases/download/v{{ nerd_fonts_version }}/JetBrainsMono.zip
+        dest: "~{{ remote_regular_user }}/.fonts/"
+        remote_src: true
+        mode: "0755"
+        owner: "{{ remote_regular_user }}"
+
+    - name: Unzip Jetbrains mono
+      when: jetbrains_mono_exists is failed
+      ansible.builtin.unarchive:
+        src: "~{{ remote_regular_user }}/.fonts/JetBrainsMono.zip"
+        dest: "~{{ remote_regular_user }}/.fonts/"
+        remote_src: true
+        creates: "~{{ remote_regular_user }}/.fonts/JetBrainsMonoNerdFont-Regular.ttf"
+        mode: "0755"
+        owner: "{{ remote_regular_user }}"
+
+    - name: Refresh font cache
+      ansible.builtin.command:
+        cmd: "fc-cache -f -v"
+      changed_when: false
+
+    - name: Set .fonts/JetBrainsMonoNerdFont-Regular.ttf as terminal font
+      ansible.builtin.command:
+        cmd: "gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrains Mono Nerd Font Regular 11'"
+      changed_when: false
