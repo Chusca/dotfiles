@@ -1,0 +1,17 @@
+actionlint 1.6.26
+azure-cli 2.50.0
+bats 1.9.0
+bun 1.0.3
+container-structure-test 1.15.0
+github-cli 2.44.1
+helm 3.14.4
+kind 0.20.0
+kubectl 1.26.2
+kubectx 0.9.5
+k9s 0.32.5
+nodejs 16.16.0
+oc 4.14.7
+opentofu 1.6.2
+python system
+terraform 1.2.5
+terragrunt 0.38.5

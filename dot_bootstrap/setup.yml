@@ -21,12 +21,17 @@
     - name: Install packages
       ansible.builtin.apt:
         name:
-          - git
+          - build-essential
           - curl
-          - htop
-          - vim
           - firefox
-          - gh
+          - git
+          - htop
+          - libssl-dev
+          - make
+          - python3-venv
+          - shfmt
+          - vim
+          - yq
           - zsh
         state: present
 
