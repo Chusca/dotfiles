@@ -1,0 +1,2 @@
+# Update PATH
+export PATH=$HOME/.local/bin:/usr/local/bin:${PATH}:/sbin:/usr/local/sbin

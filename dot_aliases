@@ -1,0 +1,6 @@
+alias ls="ls --color=auto"
+alias ll="ls -lh"
+
+
+alias python="python3"
+alias pip="pip3"
