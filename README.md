@@ -6,7 +6,11 @@ This setup only supports Ubuntu OS.
 
 ## How to run
 
-```shell
-export GITHUB_USERNAME=chusca
-sh -c "$(curl -fsLS get.chezmoi.io/lb)" -- init --apply $GITHUB_USERNAME
+```bash
+sh -c "$(curl -fsLS get.chezmoi.io/lb)" -- init --apply chusca/dotfiles
 ```
+> [!NOTE]
+> In case `curl` is not installed, you can use `wget` instead:
+> ```bash
+> sh -c "$(wget -qO- get.chezmoi.io/lb)" -- init --apply chusca/dotfiles
+> ```
