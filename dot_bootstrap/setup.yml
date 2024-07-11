@@ -80,7 +80,7 @@
       become: true
       become_user: "{{ remote_regular_user }}"
       ansible.builtin.command:
-        cmd: "/tmp/install-oh-my-zsh.sh --unattended"
+        cmd: "/tmp/install-oh-my-zsh.sh --unattended --keep-zshrc"
         creates: "~{{ remote_regular_user }}/.oh-my-zsh"
 
     - name: Install oh-my-zsh powerlevel10k theme
