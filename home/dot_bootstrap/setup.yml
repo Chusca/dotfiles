@@ -100,16 +100,6 @@
         clone: true
         update: true
 
-    - name: Clone asdf repository
-      become: true
-      become_user: "{{ remote_regular_user }}"
-      ansible.builtin.git:
-        repo: "https://github.com/asdf-vm/asdf.git"
-        dest: "~{{ remote_regular_user }}/.asdf"
-        version: "v{{ asdf_version }}"
-        clone: true
-        update: true
-
     - name: Clone fzf repository
       become: true
       become_user: "{{ remote_regular_user }}"

@@ -2,8 +2,15 @@
 
 # .tool-versions hash: {{ include "dot_tool-versions" | sha256sum }}
 
+# Check if asdf.sh is available
+asdf_script="{{- .tools.asdf.path -}}/asdf.sh"
+if [ ! -f "$asdf_script" ]; then
+    rm -rf "{{- .tools.asdf.path -}}"
+    git clone --depth 1 --branch "{{- .tools.asdf.version -}}" "{{- .tools.asdf.url -}}" "{{- .tools.asdf.path -}}"
+fi
+
 #Install tool-versions if needed
-source "${HOME}/.asdf/asdf.sh"
+source "$asdf_script"
 echo "Installing tools from .tool-versions"
 tool_versions_content="{{ include "dot_tool-versions" }}"
 while IFS= read -r line || [ -n "$line" ]; do
