@@ -1,0 +1,33 @@
+{{/* Prompt for variables */}}
+
+{{- writeToStdout "🔧 Initializing dotfiles...\n" -}}
+
+{{- $name := promptString "full name" -}}
+{{- $email := promptString "personal email" -}}
+{{- $github_user := promptString "GitHub username" -}}
+
+{{/* OS specific variables */}}
+
+{{- $os_id:= .chezmoi.osRelease.id -}}
+{{- $os_version := .chezmoi.osRelease.versionID -}}
+
+{{- /* Store data */}}
+
+data:
+  user:
+    name: {{ $name }}
+    email: {{ $email }}
+    github_user: {{ $github_user }}
+
+  host:
+    arch: {{ .chezmoi.arch }}
+    os:
+      id: {{ $os_id }}
+      version: {{ $os_version }}
+
+{{/* chezmoi config */}}
+
+edit:
+  command: code
+  args:
+    - "--wait"
