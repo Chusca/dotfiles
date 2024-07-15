@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# .p10k.zsh hash: {{ include "dot_p10k.zsh" | sha256sum }}
+# .zshrc hash: {{ include "dot_zshrc" | sha256sum }}
+
+# Check if zsh is available
+if ! command -v zsh &> /dev/null; then
+    sudo apt install -y zsh
+fi
+
+# Check if Oh My Zsh is available
+oh_my_zsh_url="{{- .tools.oh_my_zsh.url -}}"
+if [ ! -d "$HOME/.oh_my_zsh" ]; then
+    sh -c "$(curl -fsSL "$oh_my_zsh_url") --unattended --keep-zshrc"
+fi
+
+# Install Theme
+theme_name="{{- .tools.oh_my_zsh.theme.name -}}"
+theme_path="$HOME/.oh-my-zsh/custom/themes/$theme_name"
+if [ ! -d "$theme_path" ]; then
+    git clone --depth 1 --branch "{{- .tools.oh_my_zsh.theme.version -}}" "{{- .tools.oh_my_zsh.theme.url -}}" "$theme_path"
+fi
+
+# Change default shell to zsh
+if [ "$SHELL" != "$(command -v zsh)" ]; then
+    chsh -s "$(command -v zsh)"
+fi

@@ -4,3 +4,9 @@ tools:
     version: "v0.14.0"
     path: "$HOME/.asdf"
     url: "https://github.com/asdf-vm/asdf.git"
+  oh_my_zsh:
+    url: "https://install.ohmyz.sh/"
+    theme:
+      name: "powerlevel10k"
+      url: "https://github.com/romkatv/powerlevel10k.git"
+      version: "v1.20.0"

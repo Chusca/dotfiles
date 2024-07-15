@@ -8,7 +8,6 @@
     asdf_version: "0.14.0"
     fzf_version: "0.54.0"
     nerd_fonts_version: "3.1.1"
-    powerlevel10k_version: "1.20.0"
 
   tasks:
     - name: Get my user
@@ -34,13 +33,7 @@
           - unzip
           - vim
           - yq
-          - zsh
         state: present
-
-    - name: Change shell to zsh
-      ansible.builtin.user:
-        name: "{{ remote_regular_user }}"
-        shell: /usr/bin/zsh
 
     - name: Import Microsoft GPG Key
       ansible.builtin.apt_key:
@@ -75,30 +68,6 @@
         name: "{{ remote_regular_user }}"
         groups: docker
         append: true
-
-    - name: Get oh-my-zsh installation script
-      ansible.builtin.get_url:
-        url: "https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
-        dest: "/tmp/install-oh-my-zsh.sh"
-        mode: "0755"
-      register: download_result
-
-    - name: Run oh-my-zsh installation script
-      become: true
-      become_user: "{{ remote_regular_user }}"
-      ansible.builtin.command:
-        cmd: "/tmp/install-oh-my-zsh.sh --unattended --keep-zshrc"
-        creates: "~{{ remote_regular_user }}/.oh-my-zsh"
-
-    - name: Install oh-my-zsh powerlevel10k theme
-      become: true
-      become_user: "{{ remote_regular_user }}"
-      ansible.builtin.git:
-        repo: "https://github.com/romkatv/powerlevel10k.git"
-        dest: "~{{ remote_regular_user }}/.oh-my-zsh/custom/themes/powerlevel10k"
-        version: "v{{ powerlevel10k_version }}"
-        clone: true
-        update: true
 
     - name: Clone fzf repository
       become: true
